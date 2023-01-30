@@ -36,6 +36,9 @@ object BudgetService {
                 .select { expression }
                 .orderBy(BudgetTable.month to SortOrder.ASC, BudgetTable.amount to SortOrder.DESC)
 
+            val sumByType = query.groupBy { it[BudgetTable.type].name }
+                .mapValues { it.value.sumOf { v -> v[BudgetTable.amount] } }
+
             val total = query.count()
             
             val data = query
@@ -49,9 +52,6 @@ object BudgetService {
                         it[AuthorTable.fullName]
                     )
                 }
-
-            val sumByType = query.groupBy { it[BudgetTable.type].name }
-                .mapValues { it.value.sumOf { v -> v[BudgetTable.amount] } }
 
             return@transaction BudgetYearStatsResponse(
                 total = total,
