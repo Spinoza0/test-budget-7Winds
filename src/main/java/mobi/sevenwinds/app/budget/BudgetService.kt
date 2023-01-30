@@ -25,7 +25,7 @@ object BudgetService {
     suspend fun getYearStats(param: BudgetYearParam): BudgetYearStatsResponse = withContext(Dispatchers.IO) {
         transaction {
             val expression = when (param.author) {
-                "" -> (BudgetTable.year eq param.year)
+                null, "" -> (BudgetTable.year eq param.year)
                 else -> (BudgetTable.year eq param.year) and
                         (AuthorTable.fullName.lowerCase() eq param.author.toLowerCase())
             }
